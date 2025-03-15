@@ -6,7 +6,8 @@ from src.logger import logging
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 from src.components.data_tansformation import DataTransformation, DataTransformationConfig  # ✅ Fixed typo
-
+from src.components.model_trainer import ModelTrainer
+from src.components.model_trainer import ModelTrainerConfig
 @dataclass
 class DataIngestionConfig:
     train_data_path: str = os.path.join('artifacts', 'train.csv')
@@ -39,10 +40,14 @@ class DataIngestion:
         except Exception as e:
             raise CustomException(e, sys)
 
-if __name__ == "__main__":  # ✅ Moved outside the class
+if __name__ == "__main__":
     obj = DataIngestion()
     train_data, test_data = obj.initiate_data_ingestion()
 
     # ✅ Ensure transformation is applied to correct paths
     data_transformation = DataTransformation()
-    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+    train_arr, test_arr, preprocessor_path = data_transformation.initiate_data_transformation(train_data, test_data)
+
+    # ✅ Pass the missing argument
+    modeltrainer = ModelTrainer()
+    print(modeltrainer.initiate_model_trainer(train_arr, test_arr, preprocessor_path))
